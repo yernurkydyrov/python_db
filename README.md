@@ -1,142 +1,65 @@
-# Simple flask application
+# Assignment 3
 
-A Flask application with the ability to log in and register a user, create and receive articles written by one or another user.
 
 ## Installation
 
-To get started with the application you need to complete following steps:
-
-- Install dependencies:
-
-```shell
-$ pip install -r requirements.txt
+Import in the project
+```bash
+pip install -r requirements.txt
 ```
-
-- Create `.env` file in root directory of the project and add there `SECRET_KEY` and `DB_URI` variables:
-
-```
-SECRET_KEY=your-secret-key
-DB_URI=your-database-uri
-```
-
-- Create tables in your database:
-
+Set up the database with PostgreSQL
 ```sql
-
+CREATE TABLE public.users (
+	"id" integer primary key NOT NULL,
+    login text not NULL,
+	"password" text not NULL,
+	"token" text NULL
+);
 ```
-
-- Run application:
-
-```shell
-$ python3 src/app.py
+Add some users
+```sql
+INSERT INTO public.users ("id",login,"password") 
+values 
+    (1,'admin','password'), 
+    (2,'user1','password'), 
+    (3,'user2','password')
 ```
-
+Change Database connection strings in main.py
+```python
+dbName = "yourDataBaseName"
+user = "yourDataBaseUserName"
+```
 ## Usage
 
-The application consists of two modules:
+Run the server through termnial
 
-- Auth - authorization module, which responsible for user registration and token generation.
-- Article - article module, which responsible for creating new articles for user and retreiving them.
+```python
+python src/main.py
+```
 
-So in total we have following routes:
-
-- `[POST] /auth/register`
-    <details>
-    <summary>Body</summary>
-
-    ```js
-    {
-        login: String,
-        first_name: String,
-        last_name: String,
-        password: String
-    }
-    ```
-    </details>
-
-    <details>
-    <summary>Response body</summary>
-
-    ```js
-    {
-        id: String,
-        login: String,
-        first_name: String,
-        last_name: String
-    }
-    ```
-    </details>
-
-- `[POST] /auth/login`
-    <details>
-    <summary>Request body</summary>
-
-    ```js
-    {
-        login: String,
-        password: String
-    }
-    ```
-    </details>
-
-    <details>
-    <summary>Response body</summary>
-
-    ```js
-    {
-        access: String
-    }
-    ```
-    </details>
-
-- `[GET] /articles/`
-    <details>
-    <summary>Query parameters</summary>
-
-    `[OPTIONAL] author_id: String` - parameters used to retrieve articles written by specific author.
-    
-    </details>
-
-    <details>
-    <summary>Response body</summary>
-
-    ```js
-    [
-        {
-            id: Integer,
-            author_id: Integer,
-            created_at: Integer,
-            text: String
-        }
-    ]
-    ```
-    </details>
-
-- `[POST] /articles/create`
-    <details>
-    <summary>Query parameters</summary>
-
-    `[REQUIRED] token: String` - token that is used to create article for specific user.
-    
-    </details>
-
-    <details>
-    <summary>Response body</summary>
-
-    ```js
-    {
-        id: Integer,
-        author_id: Integer,
-        created_at: Integer,
-        text: String
-    }
-    ```
-    </details>
+Endpoints
+```python
+/login
+/protected?token=<token>
+```
 
 ## Examples
 
-Here is the example of usage:
+### Login examples
+Succesful log in example
+![Login](/Assignment3/assets/1.png)
 
-```shell
-$ curl -XGET 'http://localhost:5000/articles/'
-```
+Wrong password/login example
+![WrongPass](/Assignment3/assets/WrongPass.png)
+Response
+![PassResponse](/Assignment3/assets/wrongPassResponse.png)
+
+### Protected examples
+Correct Token
+![Correct](/Assignment3/assets/correct.png)
+Wrong Token
+![WrongToken](/Assignment3/assets/wrongtoken.png)
+
+
+## License
+[MIT](LICENSE.md)
